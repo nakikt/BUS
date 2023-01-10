@@ -1,0 +1,12 @@
+:root {
+    --accent-clr: rgb(16, 89, 173);
+    --dark-clr: rgb(6, 12, 17);
+    --light-clr: rgb(237, 237, 238);
+    --bg-clr: rgb(218, 222, 224);
+}
+
+.App {
+    height: 100vh;
+    background-color: var(--dark-clr);
+    color: var(--light-clr)
+}
