@@ -1,12 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
 :root {
-    --accent-clr: rgb(16, 89, 173);
-    --dark-clr: rgb(6, 12, 17);
+    --accent-clr: rgb(0, 119, 255);
+    --bg-clr: rgb(18, 35, 56);
     --light-clr: rgb(237, 237, 238);
-    --bg-clr: rgb(218, 222, 224);
+    --darker-clr: rgb(4, 11, 19);
+}
+
+* {
+    font-family: "Roboto";
+    color: var(--light-clr);
 }
 
 .App {
     height: 100vh;
-    background-color: var(--dark-clr);
-    color: var(--light-clr)
+    background-color: var(--bg-clr);
+    color: var(--light-clr);
 }

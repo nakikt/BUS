@@ -38,7 +38,7 @@
             }
 
             input {
-                color: var(--dark-clr);
+                color: var(--darker-clr);
                 background-color: var(--light-clr);
                 font-size: 18px;
                 font-weight: 700;
@@ -57,12 +57,13 @@
                     margin-top: 20px;
                     border: 3px solid var(--accent-clr);
                     border-radius: 1000px;
-                    background-color: var(--dark-clr);
-                    color: var(--light-clr);
+                    background-color: var(--bg-clr);
+                    color: var(--accent-clr);
                     transition: 200ms;
                     &:hover {
                         cursor: pointer;
                         background-color: var(--accent-clr);
+                        color: var(--light-clr);
                     }
                 }
             }

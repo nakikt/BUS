@@ -1,0 +1,160 @@
+.HousesTable {
+    margin-top: 50px;
+    width: 100%;
+    position: relative;
+
+    .container {
+        background-color: rgba(11, 15, 24, 0.349);
+        padding: 30px 50px;
+        border-radius: 20px;
+
+        table {
+            width: 100%;
+
+            tr {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                
+                &:not(:last-of-type) {
+                    &:nth-of-type(even) {
+                        background-color: rgba(255, 255, 255, 0.05);
+                    }
+                }
+            }
+
+            th, td {
+                width: 100%;
+                text-align: center;
+                padding: 10px 0;
+                margin: auto;
+
+                button {
+                    font-size: 20px;
+                    background-color: transparent;
+                    border: none;
+                    color: var(--darker-clr);
+                    transition: 200ms;
+
+                    svg {
+                        path {
+                            color: var(--light-clr);
+                            transform: scale(1);
+                            transform-origin: center;
+                            transition: 200ms;
+                        }
+                    }
+
+                    &.add {
+                        font-size: 30px;
+                        position: relative;
+
+                        svg {
+                            padding-top: 20px;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            transform: translate(-50%, -50%);
+                        }
+                    }
+
+                    &:hover {
+                        cursor: pointer;
+                        svg {
+                            path {
+                                color: var(--accent-clr);
+                                transform: scale(1.2);
+                            }
+                        }
+                    }
+
+                    &.not-logged-in {
+                        pointer-events: none;
+                        
+                        svg {
+                            path {
+                                color: rgb(126, 126, 126);
+                            }
+                        }
+                    }
+                }
+            }
+
+            th {
+                font-size: 18px;
+                border-bottom: 1px solid var(--accent-clr);
+            }
+        }
+    }
+
+    .add-form-container {
+        position: absolute;
+        visibility: hidden;
+        top: 30%;
+        width: 100%;
+
+        &.visible {
+            visibility: visible;
+        }
+
+        .inner {
+            width: 30%;
+            margin: auto;
+            padding: 30px;
+            border-radius: 20px;
+            border: 3px solid var(--accent-clr);
+            background-color: var(--bg-clr);
+
+            form {
+                display: flex;
+                flex-direction: column;
+                
+                label {
+                    font-size: 18px;
+                    font-weight: 700;
+                    margin-bottom: 5px;
+                    padding-left: 5px;
+                }
+
+                input {
+                    margin-bottom: 15px;
+                    padding: 5px 10px;
+                    border: none;
+                    border-radius: 100px;
+                    color: var(--darker-clr);
+
+                    &:focus {
+                        outline: none;
+                    }
+
+                    &.submit-btn {
+                        border: 3px solid var(--accent-clr);
+                        width: 20%;
+                        margin: auto;
+                        margin-top: 10px;
+                        color: var(--accent-clr);
+                        background-color: transparent;
+                        font-weight: 700;
+                        font-size: 16px;
+
+                        &:hover {
+                            background-color: var(--accent-clr);
+                            color: var(--light-clr);
+                            cursor: pointer;
+                        }
+                    }
+                }
+
+                .alert {
+                    visibility: hidden;
+                    padding-left: 5px;
+                    margin: 0;
+
+                    &.visible {
+                        visibility: visible;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -4,17 +4,18 @@ import logo from '../../assets/logo2.png'
 
 const Login = props => {
 
-    const [user, setUser] = useState('');
+    const [userLocal, setUserLocal] = useState('')
     const [pwd, setPwd] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (user && pwd) {
+        if (userLocal && pwd) {
             //TODO: check credentials here
             if(1) { //if credentials valid
                 props.setIsLoggedIn(true);
-                localStorage.setItem('user', user);
-                setUser('');
+                localStorage.setItem('user', userLocal);
+                props.setUser(userLocal);
+                setUserLocal('');
                 setPwd('');
                 props.setIsLogging(false);
             } else {
@@ -34,7 +35,7 @@ const Login = props => {
                     <label className="login-label">
                         User
                     </label>
-                    <input value={ user } type="text" className="user-input" onChange={(e) => setUser(e.target.value)} />
+                    <input value={ userLocal } type="text" className="user-input" onChange={(e) => setUserLocal(e.target.value)} />
                     <label className="pwd-label">
                         Password
                     </label>
