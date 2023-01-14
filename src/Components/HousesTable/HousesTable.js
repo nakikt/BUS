@@ -3,16 +3,20 @@ import { MdEdit } from 'react-icons/md';
 import { MdAddCircleOutline } from 'react-icons/md';
 import database from './database';
 import { useState } from 'react';
+import {TailSpin} from 'react-loader-spinner';
 
 const HousesTable = props => {
 
     const [data, setData] = useState(database);
     const [isAdding, setIsAdding] = useState(false);
-    const [addingValues, setAddingValues] = useState({'id': '','address': '','date': '','firstname': '','surname': '','state': ''});
+    const [addingValues, setAddingValues] = useState({'id': '','address': '','name_surname': '','condition': ''});
     const [isAddingValuesCorrect, setIsAddingValuesCorrect] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [editingDataset, setEditingDataset] = useState();
+    const [isIdNumeric, setIsIdNumeric] = useState(true);
     const [isIdUsedHook, setIsIdUsedHook] = useState();
+    const [isLoading, setIsLoading] = useState(false);
+    const [isFetchOk, setIsFetchOk] = useState(true);
 
     const handleAdd = () => {
         setIsAdding(true);
@@ -28,6 +32,8 @@ const HousesTable = props => {
             }
         }
 
+        let isIdNumericVariable = !isNaN(addingValues.id);
+
         let isIdUsed = false;
         for (let i=0; i<data.length; i++) {
             if (addingValues.id == data[i].id) {
@@ -35,24 +41,61 @@ const HousesTable = props => {
             }
         }
 
-        if(areAllFilledIn && !isIdUsed) {
+        if(areAllFilledIn && !isIdUsed && isIdNumericVariable) {
             setIsAddingValuesCorrect(true);
             setIsIdUsedHook(false);
-            setData([...data, {
-                'id': addingValues.id, 
-                'address': addingValues.address, 
-                'date': addingValues.date, 
-                'firstname': addingValues.firstname, 
-                'surname': addingValues.surname, 
-                'state': addingValues.state
-            }]);
-            setAddingValues({'id': '','address': '','date': '','firstname': '','surname': '','state': ''});
+            setIsIdNumeric(true);
+
+            setIsLoading(true);
+
+            // POST REQUEST HERE
+            fetch('http://localhost:5000/transactions/new', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    'id': addingValues.id, 
+                    'address': addingValues.address, 
+                    'name_surname': addingValues.name_surname, 
+                    'condition': addingValues.condition
+                })
+            }).then(
+                response => {
+                    response.json();
+                    setIsFetchOk(true);
+                    setIsLoading(false);
+                }
+            ).then(
+                receivedData => setData([...data, receivedData])
+            ).catch(error => {
+                console.log(error);
+                setIsFetchOk(false);
+                setIsLoading(false);
+            })
+
+            // PULL DATA/REPOSNSE? AND DISPLAY
+            // setData([...data, {
+            //     'id': addingValues.id, 
+            //     'address': addingValues.address, 
+            //     'name_surname': addingValues.name_surname, 
+            //     'condition': addingValues.condition
+            // }]);
+
+
+            setAddingValues({'id': '','address': '','name_surname': '','condition': ''});
             setIsAdding(false);
         } else {
             if (!areAllFilledIn) {
                 setIsAddingValuesCorrect(false);
+                setIsIdUsedHook(false);
+                setIsIdNumeric(true);
+            } else if (!isIdNumericVariable) {
+                setIsIdNumeric(false);
+                setIsAddingValuesCorrect(true);
+            setIsIdUsedHook(false);
             } else if (isIdUsed) {
                 setIsIdUsedHook(true);
+                setIsAddingValuesCorrect(true);
+                setIsIdNumeric(true);
             }
         }
     }
@@ -73,13 +116,12 @@ const HousesTable = props => {
             newData[editingDataset.id] = {
                 'id': addingValues.id, 
                 'address': addingValues.address, 
-                'date': addingValues.date, 
-                'firstname': addingValues.firstname, 
-                'surname': addingValues.surname, 
-                'state': addingValues.state
+                'date': editingDataset.date,
+                'name_surname': addingValues.name_surname, 
+                'condition': addingValues.condition
             };
             setData(newData);
-            setAddingValues({'id': '','address': '','date': '','firstname': '','surname': '','state': ''});
+            setAddingValues({'id': '','address': '','name_surname': '','condition': ''});
             setIsEditing(false);
         } else {
                 setIsAddingValuesCorrect(false);
@@ -110,8 +152,7 @@ const HousesTable = props => {
                             <th>Address</th>
                             <th>Date</th>
                             <th>Name</th>
-                            <th>Surname</th>
-                            <th>State</th>
+                            <th>Condition</th>
                             <th>Edit</th>
                         </tr>
 
@@ -120,9 +161,8 @@ const HousesTable = props => {
                                 <td>{house.id}</td>
                                 <td>{house.address}</td>
                                 <td>{house.date}</td>
-                                <td>{house.firstname}</td>
-                                <td>{house.surname}</td>
-                                <td>{house.state}</td>
+                                <td>{house.name_surname}</td>
+                                <td>{house.condition}</td>
                                 <td>
                                     <button className={props.isLoggedIn ? 'edit' : 'edit not-logged-in'} onClick={() => handleEdit(house.id)}>
                                         <MdEdit />
@@ -130,6 +170,23 @@ const HousesTable = props => {
                                 </td>
                             </tr>
                         )}
+
+                        {isLoading && <tr><td>
+                            <TailSpin
+                                height="40"
+                                width="40"
+                                color="white"
+                                ariaLabel="tail-spin-loading"
+                                radius="1"
+                                wrapperStyle={{
+                                    'justify-content': 'center'
+                                }}
+                                wrapperClass=""
+                                visible={true}
+                            />
+                        </td></tr>}
+
+                        {!isFetchOk && <tr><td>Something went wrong, try again</td></tr>}
                         
                         {/* ADD HOUSE ROW BUTTON */}
                         <tr>
@@ -148,18 +205,15 @@ const HousesTable = props => {
                 <div className="inner">
                     <form>
                         <label>ID</label>
-                        {isIdUsedHook && <p>ID is already being used</p>}
+                        {!isIdNumeric && <p className='alert visible'>ID has to be a number</p>}
+                        {isIdUsedHook && <p className='alert visible'>ID is already being used</p>}
                         <input type="text" value={addingValues.id} onChange={e => setAddingValues({...addingValues, id: e.target.value})}/>
                         <label>Address</label>
                         <input type="text" value={addingValues.address} onChange={e => setAddingValues({...addingValues, address: e.target.value})}/>
-                        <label>Date</label>
-                        <input type="text" value={addingValues.date} onChange={e => setAddingValues({...addingValues, date: e.target.value})}/>
                         <label>Name</label>
-                        <input type="text" value={addingValues.firstname} onChange={e => setAddingValues({...addingValues, firstname: e.target.value})}/>
-                        <label>Surname</label>
-                        <input type="text" value={addingValues.surname} onChange={e => setAddingValues({...addingValues, surname: e.target.value})}/>
-                        <label>State</label>
-                        <input type="text" value={addingValues.state} onChange={e => setAddingValues({...addingValues, state: e.target.value})}/>
+                        <input type="text" value={addingValues.name_surname} onChange={e => setAddingValues({...addingValues, name_surname: e.target.value})}/>
+                        <label>Condition</label>
+                        <input type="text" value={addingValues.condition} onChange={e => setAddingValues({...addingValues, condition: e.target.value})}/>
                         <p className={isAddingValuesCorrect ? 'alert' : 'alert visible'}>Fill in all the values</p>
                         <input type="submit" value={"Add"} className="submit-btn" onClick={handleAddSubmit}/>
                     </form>
@@ -175,14 +229,10 @@ const HousesTable = props => {
                             <input type="text" value={editingDataset.id} readOnly/>
                             <label>Address</label>
                             <input type="text" value={addingValues.address} onChange={e => setAddingValues({...addingValues, address: e.target.value})}/>
-                            <label>Date</label>
-                            <input type="text" value={addingValues.date} onChange={e => setAddingValues({...addingValues, date: e.target.value})}/>
                             <label>Name</label>
-                            <input type="text" value={addingValues.firstname} onChange={e => setAddingValues({...addingValues, firstname: e.target.value})}/>
-                            <label>Surname</label>
-                            <input type="text" value={addingValues.surname} onChange={e => setAddingValues({...addingValues, surname: e.target.value})}/>
-                            <label>State</label>
-                            <input type="text" value={addingValues.state} onChange={e => setAddingValues({...addingValues, state: e.target.value})}/>
+                            <input type="text" value={addingValues.name_surname} onChange={e => setAddingValues({...addingValues, name_surname: e.target.value})}/>
+                            <label>Condition</label>
+                            <input type="text" value={addingValues.condition} onChange={e => setAddingValues({...addingValues, condition: e.target.value})}/>
                             <p className={isAddingValuesCorrect ? 'alert' : 'alert visible'}>Fill in all the values</p>
                             <input type="submit" value={"Save"} className="submit-btn" onClick={handleEditSubmit}/>
                         </form>

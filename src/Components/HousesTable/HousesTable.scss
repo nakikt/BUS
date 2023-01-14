@@ -54,7 +54,7 @@
                             position: absolute;
                             top: 0;
                             left: 0;
-                            transform: translate(-50%, -50%);
+                            transform: translate(-25%, -50%);
                         }
                     }
 
@@ -148,7 +148,9 @@
                 .alert {
                     visibility: hidden;
                     padding-left: 5px;
+                    padding-bottom: 5px;
                     margin: 0;
+                    color: rgb(255, 212, 21);
 
                     &.visible {
                         visibility: visible;
