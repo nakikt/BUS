@@ -21,13 +21,13 @@ def home():
     response =[]
     for block in blocks:
         # print(block.last_block)
-        response.append(str( {
+        response.append({
             'id': block.last_block['property'][-1]['id'],
             'address': block.last_block['property'][-1]['address'],
-            'time': block.last_block['timestamp'],
+            'date': block.last_block['timestamp'],
             'name_surname': block.last_block['property'][-1]['name_surname'],
             'condition': block.last_block['property'][-1]['condition'],
-        }))
+        })
 
     return jsonify(response), 200
 

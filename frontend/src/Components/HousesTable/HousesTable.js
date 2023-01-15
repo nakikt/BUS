@@ -2,12 +2,12 @@ import './HousesTable.scss'
 import { MdEdit } from 'react-icons/md';
 import { MdAddCircleOutline } from 'react-icons/md';
 import database from './database';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {TailSpin} from 'react-loader-spinner';
 
 const HousesTable = props => {
 
-    const [data, setData] = useState(database);
+    const [data, setData] = useState();
     const [isAdding, setIsAdding] = useState(false);
     const [addingValues, setAddingValues] = useState({'id': '','address': '','name_surname': '','condition': ''});
     const [isAddingValuesCorrect, setIsAddingValuesCorrect] = useState(true);
@@ -17,6 +17,15 @@ const HousesTable = props => {
     const [isIdUsedHook, setIsIdUsedHook] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const [isFetchOk, setIsFetchOk] = useState(true);
+    const [pullData, setPullData] = useState(0);
+
+    useEffect(() => {
+        fetch('http://localhost:5000/').then(
+            res => res.json()
+          ).then(
+            receivedData => setData(receivedData)
+          )
+    },[pullData])
 
     const handleAdd = () => {
         setIsAdding(true);
@@ -49,7 +58,7 @@ const HousesTable = props => {
             setIsLoading(true);
 
             // POST REQUEST HERE
-            fetch('http://localhost:5000/transactions/new', {
+            fetch('http://localhost:5000/', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -65,7 +74,8 @@ const HousesTable = props => {
                     setIsLoading(false);
                 }
             ).then(
-                receivedData => setData([...data, receivedData])
+                // receivedData => setData([...data, receivedData])
+                receivedData => console.log(receivedData)
             ).catch(error => {
                 console.log(error);
                 setIsFetchOk(false);
@@ -112,15 +122,29 @@ const HousesTable = props => {
 
         if(areAllFilledIn) {
             setIsAddingValuesCorrect(true);
-            let newData = [...data];
-            newData[editingDataset.id] = {
-                'id': addingValues.id, 
-                'address': addingValues.address, 
-                'date': editingDataset.date,
-                'name_surname': addingValues.name_surname, 
-                'condition': addingValues.condition
-            };
-            setData(newData);
+
+            fetch('http://localhost:5000/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    'id': addingValues.id, 
+                    'address': addingValues.address, 
+                    'name_surname': addingValues.name_surname, 
+                    'condition': addingValues.condition
+                })
+            }).then(
+                response => {
+                    response.json();
+                    setIsFetchOk(true);
+                    setIsLoading(false);
+                    setPullData(current => current+1);                    
+                }
+            ).catch(error => {
+                console.log(error);
+                setIsFetchOk(false);
+                setIsLoading(false);
+            })
+
             setAddingValues({'id': '','address': '','name_surname': '','condition': ''});
             setIsEditing(false);
         } else {
@@ -156,7 +180,7 @@ const HousesTable = props => {
                             <th>Edit</th>
                         </tr>
 
-                        {data.map((house) => 
+                        {data?.map((house) => 
                             <tr key={house.id}>
                                 <td>{house.id}</td>
                                 <td>{house.address}</td>
@@ -179,7 +203,7 @@ const HousesTable = props => {
                                 ariaLabel="tail-spin-loading"
                                 radius="1"
                                 wrapperStyle={{
-                                    'justify-content': 'center'
+                                    'justifyContent': 'center'
                                 }}
                                 wrapperClass=""
                                 visible={true}
