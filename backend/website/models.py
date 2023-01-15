@@ -4,7 +4,7 @@ from sqlalchemy.sql import func
 import os
 import base64
 import onetimepass
-
+import pyotp
 
 
 class User(db.Model, UserMixin):
@@ -21,7 +21,8 @@ class User(db.Model, UserMixin):
             self.otp_secret = base64.b32encode(os.urandom(10)).decode('utf-8')
 
     def get_totp_uri(self):
-        return 'otpauth://totp/2FA-Demo:{0}?secret={1}&issuer=2FA-Demo'.format(self.username, self.otp_secret)
+        return pyotp.totp.TOTP(self.otp_secret).provisioning_uri(name= self.username, issuer_name="Land Registry")
 
     def verify_totp(self, token):
-        return onetimepass.valid_totp(token, self.otp_secret)
+        totp = pyotp.TOTP(self.otp_secret)
+        return totp.verify(token)

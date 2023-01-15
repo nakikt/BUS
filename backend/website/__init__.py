@@ -18,9 +18,9 @@ mine_block(blockchain, 0, "address0", "name_surname0", "condition0" )
 mine_block(blockchain1, 1, "address1", "name_surname1", "condition1")
 
 blocks = [blockchain, blockchain1]
-for block in blocks:
-    block.add_node("http://127.0.0.1:5000")
-    block.add_node("http://127.0.0.1:5001")
+for b in blocks:
+    b.add_node("http://127.0.0.1:5000")
+    b.add_node("http://127.0.0.1:5001")
 
 def create_app():
     app = Flask(__name__)

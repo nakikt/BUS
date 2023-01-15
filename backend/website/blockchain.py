@@ -26,7 +26,10 @@ class Blockchain(object):
 # create the genesis block with a specific fixed hash
 # of previous block genesis block starts with index 0
         genesis_hash = self.hash_block("genesis_block")
-        self.append_block(hash_of_previous_block = genesis_hash, nonce = self.proof_of_work(0, genesis_hash, []))
+        self.append_block(
+            nonce=self.proof_of_work(0, genesis_hash, []),
+            hash_of_previous_block = genesis_hash
+           )
 # use PoW to find the nonce for the current block
     def proof_of_work(self, index, hash_of_previous_block, properties):
 # try with nonce = 0
@@ -125,11 +128,11 @@ class Blockchain(object):
             response = requests.get(f'http://{node}//blockchain/{id}')
             # check if the length is longer and the chain
             # is valid
-            print(response)
-            print(response.json())
+
             if response.status_code == 200:
                 length = response.json()['length']
                 chain = response.json()['chain']
+            print(chain)
             print(self.valid_chain(chain))
 
             if length > max_length and self.valid_chain(chain):
