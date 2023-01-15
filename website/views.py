@@ -35,6 +35,8 @@ def home():
 
 @views.route('/', methods=['POST'])
 def new_transaction():  #TODO Tu są dodawane wartości ze strony
+
+
 # get the value passed in from the client
     values = request.get_json()
 # check that the required fields are in the POST'ed data
@@ -43,8 +45,13 @@ def new_transaction():  #TODO Tu są dodawane wartości ze strony
         return ('Missing fields', 400)
     # create a new transaction
     id = int(values['id'])
+#check if our blockchain is valid
+
+    if not blocks[id].valid_new(id):
+        response = {'message': f'Property cant be added to Block '}
+        return (jsonify(response), 201)
     mine_block(blocks[id], values['id'], values['address'],values['name_surname'], values['condition'] )
-    response = {'message': f'Property will be added to Block '}
+    response = {'message': f'Property added to Block '}
     # try:
 
     neighbours = blocks[id].nodes

@@ -34,7 +34,6 @@ def login():
                     flash('Password is incorrect.', category='error')
             else:
                 otp = request.form.get("otp")
-                print(otp)
                 if  user.verify_totp(otp): #check_password_hash(user.password, password) and
                     login_user(user, remember=True)
                     return redirect(url_for('views.home'))

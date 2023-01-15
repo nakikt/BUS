@@ -39,3 +39,22 @@ def full_chain(id):
         }
 
     return jsonify(response), 200
+
+@blockchain_func.route("/init_syn/<id>",methods = ['GET', 'POST'])
+def init_sync(id):
+    updated= blocks[int(id)].initial_sync(id)
+    if updated:
+        response = {
+            'message':
+                'The blockchain has been updated to the latest',
+        }
+    else:
+        response = {
+            'message': 'Our blockchain is the latest',
+
+        }
+    return response, 200
+
+
+
+
