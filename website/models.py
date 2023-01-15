@@ -24,4 +24,5 @@ class User(db.Model, UserMixin):
         return pyotp.totp.TOTP(self.otp_secret).provisioning_uri(name= self.username, issuer_name="Land Registry")
 
     def verify_totp(self, token):
-        return onetimepass.valid_totp(token, self.otp_secret)
+        totp = pyotp.TOTP(self.otp_secret)
+        return totp.verify(token)

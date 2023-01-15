@@ -8,7 +8,7 @@ def mine_block(blockchain,  id, address,  name_surname, condition):
         id =  id,
         address =  address,
         name_surname = name_surname,
-        condition =  condition,
+        condition =  condition
     )
 # obtain the hash of last block in the blockchain
     last_block_hash = blockchain.hash_block(blockchain.last_block)
@@ -19,7 +19,7 @@ def mine_block(blockchain,  id, address,  name_surname, condition):
 
 # add the new block to the blockchain using the last block
 # hash and the current nonce
-    block = blockchain.append_block(nonce, last_block_hash)
+    blockchain.append_block(nonce, last_block_hash)
 
 
 
