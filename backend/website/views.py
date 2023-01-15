@@ -33,7 +33,7 @@ def home():
 
 
 
-@views.route('/', methods=['POST'])
+@views.route('/edit', methods=['POST'])
 def new_transaction():  #TODO Tu są dodawane wartości ze strony
 # get the value passed in from the client
     values = request.get_json()
@@ -48,6 +48,32 @@ def new_transaction():  #TODO Tu są dodawane wartości ze strony
     # try:
 
     neighbours = blocks[id].nodes
+    for node in neighbours:
+        #blocks[id].update_blockchain(id)
+        requests.get(f'http://{node}//nodes/sync/{id}')
+    # except:
+    #     print("Masz problem")
+    response = "sukces"
+
+    return (jsonify(response), 201)
+
+@views.route('/add', methods=['POST'])
+def new_transaction2():  #TODO Tu są dodawane wartości ze strony
+# get the value passed in from the client
+    values = request.get_json()
+# check that the required fields are in the POST'ed data
+    required_fields = ['id', 'address', 'name_surname', 'condition']
+    if not all(k in values for k in required_fields):
+        return ('Missing fields', 400)
+    # create a new transaction
+    id = int(values['id'])
+    new_blockchain = Blockchain()
+    blocks.append(new_blockchain)
+    mine_block(blocks[-1], values['id'], values['address'],values['name_surname'], values['condition'] )
+    response = {'message': f'Property will be added to Block '}
+    # try:
+
+    neighbours = blocks[-1].nodes
     for node in neighbours:
         #blocks[id].update_blockchain(id)
         requests.get(f'http://{node}//nodes/sync/{id}')

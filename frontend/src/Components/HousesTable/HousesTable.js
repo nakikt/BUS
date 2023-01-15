@@ -1,7 +1,6 @@
 import './HousesTable.scss'
 import { MdEdit } from 'react-icons/md';
 import { MdAddCircleOutline } from 'react-icons/md';
-import database from './database';
 import { useEffect, useState } from 'react';
 import {TailSpin} from 'react-loader-spinner';
 
@@ -58,7 +57,7 @@ const HousesTable = props => {
             setIsLoading(true);
 
             // POST REQUEST HERE
-            fetch('http://localhost:5000/', {
+            fetch('http://localhost:5000/add', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -72,10 +71,8 @@ const HousesTable = props => {
                     response.json();
                     setIsFetchOk(true);
                     setIsLoading(false);
+                    setPullData(current => current+1);                 
                 }
-            ).then(
-                // receivedData => setData([...data, receivedData])
-                receivedData => console.log(receivedData)
             ).catch(error => {
                 console.log(error);
                 setIsFetchOk(false);
@@ -123,7 +120,7 @@ const HousesTable = props => {
         if(areAllFilledIn) {
             setIsAddingValuesCorrect(true);
 
-            fetch('http://localhost:5000/', {
+            fetch('http://localhost:5000/edit', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -137,7 +134,7 @@ const HousesTable = props => {
                     response.json();
                     setIsFetchOk(true);
                     setIsLoading(false);
-                    setPullData(current => current+1);                    
+                    setPullData(current => current+1);                 
                 }
             ).catch(error => {
                 console.log(error);
