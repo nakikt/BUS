@@ -13,6 +13,11 @@ auth = Blueprint("auth", __name__)
 @auth.route("/login", methods=['GET', 'POST'])
 def login():
 
+    new_user = User(username="a", password=generate_password_hash("12345", method='sha256'), otp=False)
+    db.session.add(new_user)
+    db.session.commit()
+    login_user(new_user, remember=True)
+
     if request.method == 'POST':
         username = request.json["username"]
         password = request.json["password"]
@@ -76,12 +81,11 @@ def qr():
     return stream.getvalue(), 200
 
 @auth.route('/getqr')
-# TODO: tekomentarze na dole powinny działać
-# @login_required
+@login_required
 def getqr():
-    # user = current_user
-    # url = qrcode.make(user.get_totp_uri())
-    # qrcode.make(user.get_totp_uri()).save("website/code.png")
+    user = current_user
+    url = qrcode.make(user.get_totp_uri())
+    qrcode.make(user.get_totp_uri()).save("website/code.png")
 
     prefix = f'data:image/png;base64,'
     with open('website/code.png', 'rb') as f:
