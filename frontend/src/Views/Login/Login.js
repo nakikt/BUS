@@ -125,9 +125,12 @@ const Login = props => {
             }
             {authNum === 2 && 
                 <div className="login-container">
+                    <h2>Two Factor Authentication Setup</h2>
+                    <p className='qr-info'>You are almost done! Please start FreeOTP on your smartphone and scan the following QR Code with it:</p>
                     <form onSubmit={ handleSubmitSecond }>
                         <img className='qrcode' src={qrCode} />
-                        <input type="submit" className="submit" value="Submit" />
+                        <p className='qr-info'>From now on, you can use it to login</p>
+                        <input type="submit" className="submit" value="Got it" />
                     </form>
                 </div>
             }

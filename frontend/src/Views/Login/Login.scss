@@ -114,5 +114,10 @@
                 margin-bottom: 20px;
             }
         }
+
+        .qr-info, form.qr-info {
+            max-width: 400px;
+            text-align: center;
+        }
     }
 }
