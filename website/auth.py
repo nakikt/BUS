@@ -1,5 +1,5 @@
 
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify
 from . import db
 from .models import User
 from flask_login import login_user, logout_user, login_required, current_user
@@ -47,7 +47,6 @@ def login():
 
 
 
-
 @auth.route("/logout")
 def logout():
     logout_user()
@@ -66,12 +65,14 @@ def two_factor_setup():
 def qr():
 
     user = current_user
+    print(user)
     # render qrcode for FreeTOTP
-    url = qrcode.make(user.get_totp_uri())
-    qrcode.make(user.get_totp_uri()).save("website/code.png")
-    stream = BytesIO()
-    url.svg(stream, scale=5)
-    return stream.getvalue(), 200
+    # url = qrcode.make(user.get_totp_uri())
+    # qrcode.make(user.get_totp_uri()).save("website/code.png")
+    # stream = BytesIO()
+    # url.svg(stream, scale=5)
+    #return stream.getvalue(), 200
+    return jsonify({"sukces"}), 200
 
 @auth.route("/check" ,methods=['GET', 'POST'])
 def check_otp():
