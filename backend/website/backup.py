@@ -1,4 +1,3 @@
-
 from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify
 from . import db
 from .models import User
@@ -9,17 +8,18 @@ from io import BytesIO
 import base64
 auth = Blueprint("auth", __name__)
 
-
 @auth.route("/login", methods=['GET', 'POST'])
 def login():
+
     # new_user = User(username="a", password=generate_password_hash("12345", method='sha256'), otp=False)
     # db.session.add(new_user)
     # db.session.commit()
     # login_user(new_user, remember=True)
+
     if request.method == 'POST':
-        username = request.json.get("username")
-        password = request.json.get("password")
-        otp_verification = request.json.get("otp_verification")
+        username = request.json["username"]
+        password = request.json["password"]
+        otp_verification = request.json["otp_verification"]
 
         user = User.query.filter_by(username=username).first()
         if user:
@@ -34,7 +34,7 @@ def login():
                     qrcode.make(current_user.get_totp_uri()).save("website/code.png")
 
                     response = 'Gonna show you QR code'
-                    return (jsonify(response), 202)
+                    return redirect(url_for('auth.two_factor_setup'))
                 else:
                     response = 'Wrong password'
                     return (jsonify(response), 404)
@@ -63,12 +63,16 @@ def logout():
     return redirect(url_for("views.home"))
 
 @auth.route('/twofactor', methods=['GET', 'POST'])
-# @login_required
-def two_factor_setup():
-
+@login_required
+def two_factor_setup():    
+    print('test')
+    print(current_user)
     # since this page contains the sensitive qrcode, make sure the browser
     # does not cache it
-    return render_template('two-factor-setup.html', user = current_user), 200
+    # return render_template('two-factor-setup.html', user = current_user), 200
+    # user = current_user
+    response = 'Gonna show you QR code'
+    return render_template('two-factor-setup.html'), 200
 
 @auth.route('/qr')
 @login_required
@@ -83,8 +87,14 @@ def qr():
     return stream.getvalue(), 200
 
 @auth.route('/getqr')
-# @login_required
-def getqr():
+@login_required
+def getqr(current_user):
+    print('test')
+    print(current_user)
+    # user = current_user
+    # url = qrcode.make(user.get_totp_uri())
+    # qrcode.make(user.get_totp_uri()).save("website/code.png")
+
     prefix = f'data:image/png;base64,'
     with open('website/code.png', 'rb') as f:
         img = f.read()

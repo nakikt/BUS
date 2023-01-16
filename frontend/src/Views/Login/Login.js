@@ -16,6 +16,12 @@ const Login = props => {
         e.preventDefault();
         if (userLocal && pwd) {
 
+            fetch('http://localhost:5000/login').then(
+                res => res.json()
+              ).then(
+                receivedData => setQrCode(receivedData)
+              )
+
             fetch('http://localhost:5000/login', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
