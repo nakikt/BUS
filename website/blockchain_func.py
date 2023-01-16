@@ -14,15 +14,12 @@ from urllib.parse import urlparse
 blockchain_func = Blueprint("blockchain_func", __name__)
 
 
-@blockchain_func.route("/nodes/sync/<id>", methods=['GET'])
+@blockchain_func.route("/nodes/sync/<id>", methods=['GET', 'POST'])
 def sync(id):
     updated = blocks[int(id)].update_blockchain(id)
     if updated:
         print( 'The blockchain has been updated to the latest')
-        response = {
-            'message':
-                'The blockchain has been updated to the latest',
-        }
+        response = str( {'message': 'The blockchain has been updated to the latest', })
     else:
         response = {
             'message': 'There was a problem with block synchronization',
@@ -41,14 +38,14 @@ def full_chain(id):
 
     return jsonify(response), 200
 
-@blockchain_func.route("/init_syn/<id>",methods = ['GET', 'POST'])
+@blockchain_func.route("/init_syn/<id>",methods = ['GET'])
 def init_sync(id):
     updated= blocks[int(id)].initial_sync(id)
     if updated:
         print(f"The blockchain {id} has been synchronized")
         response = {
             'message':
-                f'The blockchain {id} has been synchronized',
+                'The blockchain has been synchronized',
         }
     else:
         response = {

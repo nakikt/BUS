@@ -22,7 +22,6 @@ views = Blueprint("views", __name__)
 def home():
     response =[]
     for block in blocks:
-        # print(block.last_block)
         response.append(str( {
             'id': block.last_block['property'][-1]['id'],
             'address': block.last_block['property'][-1]['address'],
@@ -33,9 +32,31 @@ def home():
 
     return jsonify(response), 200
 
+@views.route("/history")
+def history():
+    response =[]
+    for block in blocks:
+        response.append(str({
+            'id': block.last_block['property'][-1]['id'],
+            'address': block.last_block['property'][-1]['address'],
+            'time': block.last_block['timestamp'],
+            'name_surname': block.last_block['property'][-1]['name_surname'],
+            'condition': block.last_block['property'][-1]['condition'],
+        }))
+        if len(block.chain)> 1:
+            for i in range(len(block.chain)-2):
+                response.append(str({
+                    'id': block.chain[i+1]['property'][-1]['id'],
+                    'address': block.chain[i+1]['property'][-1]['address'],
+                    'time': block.chain[i+1]['timestamp'],
+                    'name_surname': block.chain[i+1]['property'][-1]['name_surname'],
+                    'condition': block.chain[i+1]['property'][-1]['condition'],
+                }))
+
+    return jsonify(response), 200
 
 
-@views.route('/edit', methods=['POST'])
+@views.route('/edit', methods=['GET', 'POST'])
 def new_transaction():  # Tu są dodawane wartości ze strony
 # get the value passed in from the client
     values = request.get_json()
@@ -47,9 +68,9 @@ def new_transaction():  # Tu są dodawane wartości ze strony
     id = int(values['id'])
 
     if not blocks[id].valid_new(id):
-        response = {
+        response = str({
             'Message: The validity of the block was checked by other nodes and rejected.'
-        }
+        })
         print( 'The validity of the block was checked by other nodes and rejected.')
         return (jsonify(response), 201)
     print('The validity of the block was checked by other nodes')
@@ -59,13 +80,14 @@ def new_transaction():  # Tu są dodawane wartości ze strony
     except:
         print('Failed to add block to blockchain')
     try:
-        neighbours = blocks[id].nodes
+        neighbours = blocks[int(id)].nodes
         for node in neighbours:
             #blocks[id].update_blockchain(id)
             requests.get(f'http://{node}//nodes/sync/{id}')
+
     except:
-         print("Masz problem")
-    response = {'Block was successfully added'}
+         print("Problem with sync")
+    response = str({'Block was successfully added'})
     return (jsonify(response), 201)
 
 @views.route('/add', methods=['POST'])
@@ -86,19 +108,19 @@ def new_transaction2():  #TODO Tu są dodawane wartości ze strony
         print('Block was mined')
     except:
         print('Failed to add block to blockchain')
-
+    #tu trezba stworzyć nowy blockchain na innych nodeach
     try:
-        blocks[-1].add_node("https://127.0.0.1:5000")
-        blocks[-1].add_node("https://127.0.0.1:5001")
-        blocks[-1].add_node("https://127.0.0.1:5002")
-        blocks[-1].add_node("https://127.0.0.1:5003")
+        blocks[-1].add_node("http://127.0.0.1:5000")
+        blocks[-1].add_node("http://127.0.0.1:5001")
+        blocks[-1].add_node("http://127.0.0.1:5002")
+        blocks[-1].add_node("http://127.0.0.1:5003")
         neighbours = blocks[id].nodes
         for node in neighbours:
             # blocks[id].update_blockchain(id)
             requests.get(f'http://{node}//nodes/sync/{id}')
     except:
         print("Masz problem")
-    response = {'Block was successfully added'}
+    response = {'message' :'Block was successfully added'}
 
 
     return (jsonify(response), 201)

@@ -114,37 +114,41 @@ class Blockchain(object):
 
     def update_blockchain(self, id):
         # get the nodes around us that has been registered
-        neighbours = self.nodes
-        new_chain = None
-        # for simplicity, look for chains longer than ours
-        max_length = len(self.chain)
-        # grab and verify the chains from all the nodes in
-        # our network
+        try:
+            neighbours = self.nodes
+            new_chain = None
+            # for simplicity, look for chains longer than ours
+            max_length = len(self.chain)
+            # grab and verify the chains from all the nodes in
+            # our network
 
-        for node in neighbours:
-            # get the blockchain from the other nodes
-            response = requests.get(f'https://{node}//blockchain/{id}')
-            # check if the length is longer and the chain
-            # is valid
+            for node in neighbours:
+                # get the blockchain from the other nodes
+                response = requests.get(f'http://{node}//blockchain/{id}')
+                # check if the length is longer and the chain
+                # is valid
 
-            if response.status_code == 200:
-                length = response.json()['length']
-                chain = response.json()['chain']
+                if response.status_code == 200:
 
-            if length > max_length:
-                max_length = length
-                new_chain = chain
+                    length = response.json()['length']
+                    chain = response.json()['chain']
 
-        # replace
-        if new_chain is not None:
-            self.chain = new_chain
+                if length > max_length:
+                    max_length = length
+                    new_chain = chain
+
+            # replace
+            if new_chain is not None:
+                self.chain = new_chain
+                return True
             return True
-        return False
+        except:
+            return False
 
     def initial_sync(self, id):
 
 
-        node = "https://127.0.0.1:5000"
+        node = "http://127.0.0.1:5000"
                 # get the blockchain from the other nodes
         response = requests.get(f'{node}/blockchain/{id}',verify=False)
                 # check if the length is longer and the chain
@@ -169,7 +173,7 @@ class Blockchain(object):
         x = 0
         for node in neighbours:
             # get the blockchain from the other nodes
-            response = requests.get(f'https://{node}//blockchain/{id}',verify=False)
+            response = requests.get(f'http://{node}//blockchain/{id}')
             # check if the length is longer and the chain
             # is valid
 
