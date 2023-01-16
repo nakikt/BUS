@@ -39,14 +39,9 @@ def login():
                     response = 'Wrong password'
                     return (jsonify(response), 404)
             else:
-<<<<<<< HEAD:backend/website/auth.py
                 otp = request.json["otp"]
                 print(otp)
                 if  user.verify_totp(otp): 
-=======
-                otp = request.form.get("otp")
-                if  user.verify_totp(otp): #check_password_hash(user.password, password) and
->>>>>>> nakikt/main:website/auth.py
                     login_user(user, remember=True)
                     response = 'Login successful'
                     return (jsonify(response), 201)

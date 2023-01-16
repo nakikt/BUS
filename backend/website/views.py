@@ -36,11 +36,7 @@ def home():
 
 
 @views.route('/edit', methods=['POST'])
-<<<<<<< HEAD:backend/website/views.py
-def new_transaction():  #TODO Tu są dodawane wartości ze strony
-=======
 def new_transaction():  # Tu są dodawane wartości ze strony
->>>>>>> nakikt/main:website/views.py
 # get the value passed in from the client
     values = request.get_json()
 # check that the required fields are in the POST'ed data
@@ -84,22 +80,6 @@ def new_transaction2():  #TODO Tu są dodawane wartości ze strony
     id = int(values['id'])
     new_blockchain = Blockchain()
     blocks.append(new_blockchain)
-<<<<<<< HEAD:backend/website/views.py
-    mine_block(blocks[-1], values['id'], values['address'],values['name_surname'], values['condition'] )
-    response = {'message': f'Property will be added to Block '}
-    # try:
-
-    neighbours = blocks[-1].nodes
-    for node in neighbours:
-        #blocks[id].update_blockchain(id)
-        requests.get(f'http://{node}//nodes/sync/{id}')
-    # except:
-    #     print("Masz problem")
-    response = "sukces"
-
-    return (jsonify(response), 201)
-
-=======
 
     try:
         mine_block(blocks[-1], values['id'], values['address'], values['name_surname'], values['condition'])
@@ -122,6 +102,5 @@ def new_transaction2():  #TODO Tu są dodawane wartości ze strony
 
 
     return (jsonify(response), 201)
->>>>>>> nakikt/main:website/views.py
 
 
