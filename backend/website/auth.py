@@ -12,7 +12,7 @@ auth = Blueprint("auth", __name__)
 
 @auth.route("/login", methods=['GET', 'POST'])
 def login():
-    # new_user = User(username="a", password=generate_password_hash("12345", method='sha256'), otp=False)
+    # new_user = User(username="Tomasz", password=generate_password_hash("12345", method='sha256'), otp=False)
     # db.session.add(new_user)
     # db.session.commit()
     # login_user(new_user, remember=True)
