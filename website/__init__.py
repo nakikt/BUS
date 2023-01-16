@@ -13,15 +13,21 @@ from .blockchain import Blockchain
 
 blockchain = Blockchain()
 blockchain1 = Blockchain()
+blockchain2 = Blockchain()
+blockchain3 = Blockchain()
 
-mine_block(blockchain, 0, "address0", "name_surname0", "condition0" )
-mine_block(blockchain1, 1, "address1", "name_surname1", "condition1")
+mine_block(blockchain, 0,"Funny Street 6", "Ellen Geller", "bad")
+mine_block(blockchain1, 1, "Forest Street 13", "John Silva", "good")
+mine_block(blockchain2, 2, "Sunny Street 101", "James Bond", "medium")
+mine_block(blockchain3, 3, "Garden Street 90", "Harrison Capybara", "excellent")
 
-blocks = [blockchain, blockchain1]
+
+blocks = [blockchain, blockchain1, blockchain2, blockchain3]
 for b in blocks:
-    b.add_node("http://127.0.0.1:5000")
-    b.add_node("http://127.0.0.1:5001")
-
+    b.add_node("https://127.0.0.1:5000")
+    b.add_node("https://127.0.0.1:5001")
+    b.add_node("https://127.0.0.1:5002")
+    b.add_node("https://127.0.0.1:5003")
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = "helloworld"

@@ -104,7 +104,6 @@ class Blockchain(object):
 # hash of the previous block together with the
 # nonce and see if it matches the target
             if not self.valid_proof(current_index, block['hash_of_previous_block'],block['property'],block['nonce']):
-                print('Tu jest problem')
                 return False
 # move on to the next block on the chain
             last_block = block
@@ -124,7 +123,7 @@ class Blockchain(object):
 
         for node in neighbours:
             # get the blockchain from the other nodes
-            response = requests.get(f'http://{node}//blockchain/{id}')
+            response = requests.get(f'https://{node}//blockchain/{id}')
             # check if the length is longer and the chain
             # is valid
 
@@ -145,9 +144,9 @@ class Blockchain(object):
     def initial_sync(self, id):
 
 
-        node = "http://127.0.0.1:5000"
+        node = "https://127.0.0.1:5000"
                 # get the blockchain from the other nodes
-        response = requests.get(f'{node}/blockchain/{id}')
+        response = requests.get(f'{node}/blockchain/{id}',verify=False)
                 # check if the length is longer and the chain
                 # is valid
 
@@ -155,7 +154,6 @@ class Blockchain(object):
             length = response.json()['length']
             chain = response.json()['chain']
             self.chain = chain
-            print("Udało się")
             return True
 
         return False
@@ -171,7 +169,7 @@ class Blockchain(object):
         x = 0
         for node in neighbours:
             # get the blockchain from the other nodes
-            response = requests.get(f'http://{node}//blockchain/{id}')
+            response = requests.get(f'https://{node}//blockchain/{id}',verify=False)
             # check if the length is longer and the chain
             # is valid
 

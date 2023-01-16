@@ -18,13 +18,14 @@ blockchain_func = Blueprint("blockchain_func", __name__)
 def sync(id):
     updated = blocks[int(id)].update_blockchain(id)
     if updated:
+        print( 'The blockchain has been updated to the latest')
         response = {
             'message':
                 'The blockchain has been updated to the latest',
         }
     else:
         response = {
-            'message': 'Our blockchain is the latest',
+            'message': 'There was a problem with block synchronization',
 
         }
     return response, 200
@@ -44,13 +45,14 @@ def full_chain(id):
 def init_sync(id):
     updated= blocks[int(id)].initial_sync(id)
     if updated:
+        print(f"The blockchain {id} has been synchronized")
         response = {
             'message':
-                'The blockchain has been updated to the latest',
+                f'The blockchain {id} has been synchronized',
         }
     else:
         response = {
-            'message': 'Our blockchain is the latest',
+            'message': 'There was a problem with block synchronization',
 
         }
     return response, 200
