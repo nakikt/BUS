@@ -10,13 +10,12 @@ from datetime import datetime
 from flask import Blueprint
 
 class Blockchain(object):
-    difficulty_target = str("0000")
+    difficulty_target = "0000"
     def hash_block(self, block):
 # encode the block into bytes and then hashes it;
         block_encoded = json.dumps(block,sort_keys=True).encode()
         return hashlib.sha256(block_encoded).hexdigest()
     def __init__(self):
-
         self.nodes = set()
 # stores all the blocks in the entire blockchain
         self.chain = []
@@ -27,8 +26,8 @@ class Blockchain(object):
 # of previous block genesis block starts with index 0
         genesis_hash = self.hash_block("genesis_block")
         self.append_block(
-            nonce=self.proof_of_work(0, genesis_hash, []),
-            hash_of_previous_block = genesis_hash
+            hash_of_previous_block=genesis_hash,
+            nonce=self.proof_of_work(0, genesis_hash, [])
            )
 # use PoW to find the nonce for the current block
     def proof_of_work(self, index, hash_of_previous_block, properties):
@@ -105,7 +104,6 @@ class Blockchain(object):
 # hash of the previous block together with the
 # nonce and see if it matches the target
             if not self.valid_proof(current_index, block['hash_of_previous_block'],block['property'],block['nonce']):
-                print('Tu jest problem')
                 return False
 # move on to the next block on the chain
             last_block = block
@@ -125,17 +123,15 @@ class Blockchain(object):
 
         for node in neighbours:
             # get the blockchain from the other nodes
-            response = requests.get(f'http://{node}//blockchain/{id}')
+            response = requests.get(f'https://{node}//blockchain/{id}')
             # check if the length is longer and the chain
             # is valid
 
             if response.status_code == 200:
                 length = response.json()['length']
                 chain = response.json()['chain']
-            print(chain)
-            print(self.valid_chain(chain))
 
-            if length > max_length and self.valid_chain(chain):
+            if length > max_length:
                 max_length = length
                 new_chain = chain
 
@@ -144,4 +140,45 @@ class Blockchain(object):
             self.chain = new_chain
             return True
         return False
+
+    def initial_sync(self, id):
+
+
+        node = "https://127.0.0.1:5000"
+                # get the blockchain from the other nodes
+        response = requests.get(f'{node}/blockchain/{id}',verify=False)
+                # check if the length is longer and the chain
+                # is valid
+
+        if response.status_code == 200:
+            length = response.json()['length']
+            chain = response.json()['chain']
+            self.chain = chain
+            return True
+
+        return False
+    def valid_new(self,id):
+        # get the nodes around us that has been registered
+        neighbours = self.nodes
+        # for simplicity, look for chains longer than ours
+
+        # grab and verify the chains from all the nodes in
+        # our network
+        chain_to_check = self.chain
+        number_of_nodes = len(neighbours)
+        x = 0
+        for node in neighbours:
+            # get the blockchain from the other nodes
+            response = requests.get(f'https://{node}//blockchain/{id}',verify=False)
+            # check if the length is longer and the chain
+            # is valid
+
+            if response.status_code == 200:
+                chain = response.json()['chain']
+                if chain_to_check == chain:
+                    x+=1
+                if x > (number_of_nodes/2):
+                    return True
+        return False
+
 

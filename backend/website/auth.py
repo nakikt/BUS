@@ -39,9 +39,14 @@ def login():
                     response = 'Wrong password'
                     return (jsonify(response), 404)
             else:
+<<<<<<< HEAD:backend/website/auth.py
                 otp = request.json["otp"]
                 print(otp)
                 if  user.verify_totp(otp): 
+=======
+                otp = request.form.get("otp")
+                if  user.verify_totp(otp): #check_password_hash(user.password, password) and
+>>>>>>> nakikt/main:website/auth.py
                     login_user(user, remember=True)
                     response = 'Login successful'
                     return (jsonify(response), 201)
@@ -53,7 +58,6 @@ def login():
             return (jsonify(response), 401)
 
     return render_template("login.html", user=current_user)
-
 
 
 
@@ -75,12 +79,14 @@ def two_factor_setup():
 def qr():
 
     user = current_user
+    print(user)
     # render qrcode for FreeTOTP
-    url = qrcode.make(user.get_totp_uri())
-    qrcode.make(user.get_totp_uri()).save("website/code.png")
-    stream = BytesIO()
-    url.svg(stream, scale=5)
-    return stream.getvalue(), 200
+    # url = qrcode.make(user.get_totp_uri())
+    # qrcode.make(user.get_totp_uri()).save("website/code.png")
+    # stream = BytesIO()
+    # url.svg(stream, scale=5)
+    #return stream.getvalue(), 200
+    return jsonify({"sukces"}), 200
 
 @auth.route('/getqr')
 # @login_required
