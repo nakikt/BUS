@@ -19,7 +19,7 @@ def sync(id):
     updated = blocks[int(id)].update_blockchain(id)
     if updated:
         print( 'The blockchain has been updated to the latest')
-        response = str( {'message': 'The blockchain has been updated to the latest', })
+        response = str ({'message': 'The blockchain has been updated to the latest', })
     else:
         response = {
             'message': 'There was a problem with block synchronization',

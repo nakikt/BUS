@@ -19,11 +19,9 @@ class Blockchain(object):
         self.nodes = set()
 # stores all the blocks in the entire blockchain
         self.chain = []
-# temporarily stores the property  for the current
-# block
+# temporarily stores the property  for the current block
         self.current_property = []
-# create the genesis block with a specific fixed hash
-# of previous block genesis block starts with index 0
+# create the genesis block with a specific fixed hash of previous block genesis block starts with index 0
         genesis_hash = self.hash_block("genesis_block")
         self.append_block(
             hash_of_previous_block=genesis_hash,
@@ -33,16 +31,14 @@ class Blockchain(object):
     def proof_of_work(self, index, hash_of_previous_block, properties):
 # try with nonce = 0
         nonce = 0
-# try hashing the nonce together with the hash of the
-# previous block until it is valid
+# try hashing the nonce together with the hash of the previous block until it is valid
         while self.valid_proof(index, hash_of_previous_block, properties, nonce) is False:
             nonce += 1
 
         return nonce
 # check if the block's hash meets the difficulty target
     def valid_proof(self, index, hash_of_previous_block, properties, nonce):
-# create a string containing the hash of the previous
-# block and the block content, including the nonce
+# create a string containing the hash of the previous block and the block content, including the nonce
         content = f'{index}{hash_of_previous_block}{properties}{nonce}'.encode()
 # hash using sha256
         content_hash = hashlib.sha256(content).hexdigest()
@@ -57,23 +53,20 @@ class Blockchain(object):
             'nonce': nonce,
             'hash_of_previous_block': hash_of_previous_block
             }
-# reset the current list of properties
+# reset the current list of the property attributes
         self.current_property = []
         # add the new block to the blockchain
         self.chain.append(block)
         return block
     def add_property (self, id, address,  name_surname, condition):
-# adds a new property to the current list of
-# property
+# adds a new property to the current list of property
         self.current_property.append({
             'id': id,
             'address': address,
             'name_surname': name_surname,
             'condition': condition,
             })
-# get the index of the last block in the blockchain
-# and add one to it this will be the block that the
-# current property will be added to
+# get the index of the last block in the blockchain and add one to it this will be the block that the current property will be added to
         return self.last_block['index'] + 1
     @property
     def last_block(self):

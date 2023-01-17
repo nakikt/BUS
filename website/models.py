@@ -5,6 +5,8 @@ import os
 import base64
 import onetimepass
 import pyotp
+import secrets
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(db.Model, UserMixin):
@@ -13,12 +15,15 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150))
     otp = db.Column(db.Boolean, nullable=False)
     otp_secret = db.Column(db.String(16))
+    salt = db.Column(db.String(10))
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
+
         if self.otp_secret is None:
             # generate a random secret
             self.otp_secret = base64.b32encode(os.urandom(10)).decode('utf-8')
+
 
     def get_totp_uri(self):
         return pyotp.totp.TOTP(self.otp_secret).provisioning_uri(name= self.username, issuer_name="Land Registry")

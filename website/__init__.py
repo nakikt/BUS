@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
+from datetime import timedelta
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from .methods import mine_block
@@ -33,6 +34,7 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = "helloworld"
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
     db.init_app(app)
 
 
