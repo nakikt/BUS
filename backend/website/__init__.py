@@ -24,10 +24,10 @@ mine_block(blockchain3, 3, "Garden Street 90", "Harrison Capybara", "excellent")
 
 blocks = [blockchain, blockchain1, blockchain2, blockchain3]
 for b in blocks:
-    b.add_node("https://127.0.0.1:5000")
-    b.add_node("https://127.0.0.1:5001")
-    b.add_node("https://127.0.0.1:5002")
-    b.add_node("https://127.0.0.1:5003")
+    b.add_node("http://127.0.0.1:5000")
+    b.add_node("http://127.0.0.1:5001")
+    b.add_node("http://127.0.0.1:5002")
+    b.add_node("http://127.0.0.1:5003")
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = "helloworld"

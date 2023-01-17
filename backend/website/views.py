@@ -59,7 +59,7 @@ def new_transaction():  # Tu są dodawane wartości ze strony
     except:
         print('Failed to add block to blockchain')
     try:
-        neighbours = blocks[id].nodes
+        neighbours = blocks[int(id)].nodes
         for node in neighbours:
             #blocks[id].update_blockchain(id)
             requests.get(f'http://{node}//nodes/sync/{id}')
@@ -88,11 +88,11 @@ def new_transaction2():  #TODO Tu są dodawane wartości ze strony
         print('Failed to add block to blockchain')
 
     try:
-        blocks[-1].add_node("https://127.0.0.1:5000")
-        blocks[-1].add_node("https://127.0.0.1:5001")
-        blocks[-1].add_node("https://127.0.0.1:5002")
-        blocks[-1].add_node("https://127.0.0.1:5003")
-        neighbours = blocks[id].nodes
+        blocks[-1].add_node("http://127.0.0.1:5000")
+        blocks[-1].add_node("http://127.0.0.1:5001")
+        blocks[-1].add_node("http://127.0.0.1:5002")
+        blocks[-1].add_node("http://127.0.0.1:5003")
+        neighbours = blocks[-1].nodes
         for node in neighbours:
             # blocks[id].update_blockchain(id)
             requests.get(f'http://{node}//nodes/sync/{id}')
