@@ -170,7 +170,6 @@ class Blockchain(object):
 
             if response.status_code == 200:
                 chain = response.json()['chain']
-                print(chain)
                 if chain_to_check == chain:
                     x+=1
                 if x > (number_of_nodes/2):
