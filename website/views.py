@@ -11,6 +11,7 @@ views = Blueprint("views", __name__)
 @views.route("/home")
 def home():
     response =[]
+
     for block in blocks:
         response.append(str( {
             'id': block.last_block['property'][-1]['id'],
@@ -56,7 +57,6 @@ def new_transaction():  # Tu są dodawane wartości ze strony
         return ('Missing fields', 400)
     # create a new transaction
     id = int(values['id'])
-
     if not blocks[id].valid_new(id):
         response = str({
             'Message: The validity of the block was checked by other nodes and rejected.'
@@ -94,32 +94,30 @@ def new_transaction2():  #TODO Tu są dodawane wartości ze strony
         new_blockchain = New_blockchains(f'new_blockchain{id}')
         new_blockchain.name = Blockchain()
         blocks.append(new_blockchain.name)
-        blocks.remove(blocks[-1])
+        # new = Blockchain()
+        # blocks.append(new[-1])
         print(f'Blockchain #{id} has been added')
     except:
         print('Problem with adding new blockchain')
-
+    # for block in blocks:
+    #     print(block.chain)
     try:
 
         mine_block(blocks[-1], values['id'], values['address'], values['name_surname'], values['condition'])
         print('Block was mined')
     except:
         print('Failed to add block to blockchain')
+    # try:
 
-    try:
-        blocks[-1].add_node("http://127.0.0.1:5000")
-        blocks[-1].add_node("http://127.0.0.1:5001")
-        blocks[-1].add_node("http://127.0.0.1:5002")
-        blocks[-1].add_node("http://127.0.0.1:5003")
-        neighbours = blocks[id].nodes
-        for node in neighbours:
-            if node == f'http://127.0.0.1:{PORT}':
-                break
-            else:
-                requests.get(f'http://{node}//addblockchain/{id}')
-
-    except:
-        print('There is a problem with init the blockchain')
+    blocks[int(id)].add_node("http://127.0.0.1:5000")
+    blocks[int(id)].add_node("http://127.0.0.1:5001")
+    blocks[int(id)].add_node("http://127.0.0.1:5002")
+    blocks[int(id)].add_node("http://127.0.0.1:5003")
+    neighbours = blocks[int(id)].nodes
+    for node in neighbours:
+        print(node)
+        if node != '127.0.0.1:5000':
+            requests.get(f'http://{node}//addblockchain/{id}')
 
     response = {'message' :'Block was successfully added'}
 

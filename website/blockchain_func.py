@@ -53,7 +53,13 @@ def addblockchain(id):
     new_blockchain = New_blockchains(f'new_blockchain{id}')
     new_blockchain.name = Blockchain()
     blocks.append(new_blockchain.name)
-
+    blocks[int(id)].add_node("http://127.0.0.1:5000")
+    blocks[int(id)].add_node("http://127.0.0.1:5001")
+    blocks[int(id)].add_node("http://127.0.0.1:5002")
+    blocks[int(id)].add_node("http://127.0.0.1:5003")
+    # new = Blockchain()
+    # blocks.append(new)
+    print(f'Blockchain #{id} has been added')
     add = blocks[int(id)].initial_sync(id)
     if add:
         print(f"The blockchain {id} has been added")

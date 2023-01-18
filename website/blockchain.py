@@ -139,7 +139,7 @@ class Blockchain(object):
     def initial_sync(self, id):
 
 
-        node = f'http://127.0.0.1:{PORT}'
+        node = f'http://127.0.0.1:5000'
                 # get the blockchain from the other nodes
         response = requests.get(f'{node}/blockchain/{id}')
                 # check if the length is longer and the chain
@@ -170,6 +170,7 @@ class Blockchain(object):
 
             if response.status_code == 200:
                 chain = response.json()['chain']
+                print(chain)
                 if chain_to_check == chain:
                     x+=1
                 if x > (number_of_nodes/2):
