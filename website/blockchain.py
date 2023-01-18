@@ -1,13 +1,11 @@
-import sys
 import hashlib
 import json
 from time import time
-from uuid import uuid4
-from flask import Flask, jsonify, request
 import requests
 from urllib.parse import urlparse
 from datetime import datetime
-from flask import Blueprint
+import sys
+PORT = sys.argv[1]
 
 class Blockchain(object):
     difficulty_target = "0000"
@@ -141,9 +139,9 @@ class Blockchain(object):
     def initial_sync(self, id):
 
 
-        node = "http://127.0.0.1:5000"
+        node = f'http://127.0.0.1:{PORT}'
                 # get the blockchain from the other nodes
-        response = requests.get(f'{node}/blockchain/{id}',verify=False)
+        response = requests.get(f'{node}/blockchain/{id}')
                 # check if the length is longer and the chain
                 # is valid
 

@@ -1,21 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint
 from .blockchain import Blockchain
-
-from . import db, blocks
-import sys
-import hashlib
-import json
-from time import time
-from uuid import uuid4
-from flask import Flask, jsonify, request
-from flask_login import login_user, logout_user, login_required, current_user
-
+from . import blocks, PORT
+from flask import jsonify, request
 import requests
-from urllib.parse import urlparse
-from .methods import mine_block
+from .methods import mine_block, New_blockchains
+
 views = Blueprint("views", __name__)
-
-
 
 @views.route("/")
 @views.route("/home")
@@ -100,15 +90,22 @@ def new_transaction2():  #TODO Tu są dodawane wartości ze strony
         return ('Missing fields', 400)
     # create a new transaction
     id = int(values['id'])
-    new_blockchain = Blockchain()
-    blocks.append(new_blockchain)
+    try:
+        new_blockchain = New_blockchains(f'new_blockchain{id}')
+        new_blockchain.name = Blockchain()
+        blocks.append(new_blockchain.name)
+        blocks.remove(blocks[-1])
+        print(f'Blockchain #{id} has been added')
+    except:
+        print('Problem with adding new blockchain')
 
     try:
+
         mine_block(blocks[-1], values['id'], values['address'], values['name_surname'], values['condition'])
         print('Block was mined')
     except:
         print('Failed to add block to blockchain')
-    #tu trezba stworzyć nowy blockchain na innych nodeach
+
     try:
         blocks[-1].add_node("http://127.0.0.1:5000")
         blocks[-1].add_node("http://127.0.0.1:5001")
@@ -116,10 +113,14 @@ def new_transaction2():  #TODO Tu są dodawane wartości ze strony
         blocks[-1].add_node("http://127.0.0.1:5003")
         neighbours = blocks[id].nodes
         for node in neighbours:
-            # blocks[id].update_blockchain(id)
-            requests.get(f'http://{node}//nodes/sync/{id}')
+            if node == f'http://127.0.0.1:{PORT}':
+                break
+            else:
+                requests.get(f'http://{node}//addblockchain/{id}')
+
     except:
-        print("Masz problem")
+        print('There is a problem with init the blockchain')
+
     response = {'message' :'Block was successfully added'}
 
 

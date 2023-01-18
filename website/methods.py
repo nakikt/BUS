@@ -1,4 +1,7 @@
-from .blockchain import Blockchain
+#This class helps with creating names for new blockchains
+class New_blockchains:
+  def __init__(self, name):
+    self.name = name
 
 def mine_block(blockchain,  id, address,  name_surname, condition):
     blockchain.add_property(

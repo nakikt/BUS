@@ -1,15 +1,12 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from os import path
 from datetime import timedelta
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager
 from .methods import mine_block
+import sys
 db = SQLAlchemy()
 DB_NAME = "database.db"
-
-
-
+PORT =  sys.argv[1]
 from .blockchain import Blockchain
 
 blockchain = Blockchain()
