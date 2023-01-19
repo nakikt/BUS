@@ -16,12 +16,6 @@ const Login = props => {
         e.preventDefault();
         if (userLocal && pwd) {
 
-            fetch('http://localhost:5000/login').then(
-                res => res.json()
-              ).then(
-                receivedData => setQrCode(receivedData)
-              )
-
             fetch('http://localhost:5000/login', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -58,6 +52,9 @@ const Login = props => {
                                     break;
                                 case 404:
                                     setErrorText('Wrong password');
+                                    break;
+                                default:
+                                    setErrorText('Something went wrong, please try again');
                                     break;
                             }
                         }                        
@@ -128,7 +125,7 @@ const Login = props => {
                     <h2>Two Factor Authentication Setup</h2>
                     <p className='qr-info'>You are almost done! Please start FreeOTP on your smartphone and scan the following QR Code with it:</p>
                     <form onSubmit={ handleSubmitSecond }>
-                        <img className='qrcode' src={qrCode} />
+                        <img className='qrcode' src={qrCode} alt='QR Code'/>
                         <p className='qr-info'>From now on, you can use it to login</p>
                         <input type="submit" className="submit" value="Got it" />
                     </form>

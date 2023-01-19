@@ -14,6 +14,7 @@ const HousesTable = props => {
     const [editingDataset, setEditingDataset] = useState();
     const [isIdNumeric, setIsIdNumeric] = useState(true);
     const [isIdUsedHook, setIsIdUsedHook] = useState();
+    const [isIdNextValue, setIsIdNextValue] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [isFetchOk, setIsFetchOk] = useState(true);
     const [pullData, setPullData] = useState(0);
@@ -27,82 +28,95 @@ const HousesTable = props => {
     },[pullData])
 
     const handleAdd = () => {
-        setIsAdding(true);
+        if (props.isLoggedIn) setIsAdding(true);
     }
 
     const handleAddSubmit = e => {
         e.preventDefault();
 
-        let areAllFilledIn = true;
-        for (const value of Object.values(addingValues)) {
-            if (value === '') {
-                areAllFilledIn = false;
-            }
-        }
-
-        let isIdNumericVariable = !isNaN(addingValues.id);
-
-        let isIdUsed = false;
-        for (let i=0; i<data.length; i++) {
-            if (addingValues.id == data[i].id) {
-                isIdUsed = true;
-            }
-        }
-
-        if(areAllFilledIn && !isIdUsed && isIdNumericVariable) {
-            setIsAddingValuesCorrect(true);
-            setIsIdUsedHook(false);
-            setIsIdNumeric(true);
-
-            setIsLoading(true);
-
-            // POST REQUEST HERE
-            fetch('http://localhost:5000/add', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    'id': addingValues.id, 
-                    'address': addingValues.address, 
-                    'name_surname': addingValues.name_surname, 
-                    'condition': addingValues.condition
-                })
-            }).then(
-                response => {
-                    response.json();
-                    setIsFetchOk(true);
-                    setIsLoading(false);
-                    setPullData(current => current+1);                 
+        if (props.isLoggedIn) {
+            let areAllFilledIn = true;
+            for (const value of Object.values(addingValues)) {
+                if (value === '') {
+                    areAllFilledIn = false;
                 }
-            ).catch(error => {
-                console.log(error);
-                setIsFetchOk(false);
-                setIsLoading(false);
-            })
+            }
 
-            // PULL DATA/REPOSNSE? AND DISPLAY
-            // setData([...data, {
-            //     'id': addingValues.id, 
-            //     'address': addingValues.address, 
-            //     'name_surname': addingValues.name_surname, 
-            //     'condition': addingValues.condition
-            // }]);
+            let isIdNumericVariable = !isNaN(addingValues.id);
 
+            let isIdUsed = false;
+            let highestId = 0;
+            for (let i=0; i<data.length; i++) {
+                if (Number(addingValues.id) === Number(data[i].id)) isIdUsed = true;
+                if (highestId < data[i].id) highestId = data[i].id;
+            }
+            let isIdNext = true;
+            if(Number(addingValues.id) !== Number(highestId)+1) isIdNext = false;
 
-            setAddingValues({'id': '','address': '','name_surname': '','condition': ''});
-            setIsAdding(false);
-        } else {
-            if (!areAllFilledIn) {
-                setIsAddingValuesCorrect(false);
+            if(areAllFilledIn && !isIdUsed && isIdNumericVariable && isIdNext) {
+                setIsAddingValuesCorrect(true);
                 setIsIdUsedHook(false);
                 setIsIdNumeric(true);
-            } else if (!isIdNumericVariable) {
-                setIsIdNumeric(false);
-                setIsAddingValuesCorrect(true);
-            setIsIdUsedHook(false);
-            } else if (isIdUsed) {
-                setIsIdUsedHook(true);
-                setIsAddingValuesCorrect(true);
-                setIsIdNumeric(true);
+                setIsIdNextValue(true);
+
+                setIsLoading(true);
+
+                // POST REQUEST HERE
+                fetch('http://localhost:5000/add', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        'id': addingValues.id, 
+                        'address': addingValues.address, 
+                        'name_surname': addingValues.name_surname, 
+                        'condition': addingValues.condition
+                    })
+                }).then(
+                    response => {
+                        response.json();
+                        setIsFetchOk(true);
+                        setIsLoading(false);
+                        setPullData(current => current+1);                 
+                    }
+                ).catch(error => {
+                    console.log(error);
+                    setIsFetchOk(false);
+                    setIsLoading(false);
+                })
+
+                // PULL DATA/REPOSNSE? AND DISPLAY
+                // setData([...data, {
+                //     'id': addingValues.id, 
+                //     'address': addingValues.address, 
+                //     'name_surname': addingValues.name_surname, 
+                //     'condition': addingValues.condition
+                // }]);
+
+
+                setAddingValues({'id': '','address': '','name_surname': '','condition': ''});
+                setIsAdding(false);
+            } else {
+                if (!areAllFilledIn) {
+                    setIsAddingValuesCorrect(false);
+                    setIsIdUsedHook(false);
+                    setIsIdNumeric(true);
+                    setIsIdNextValue(true);
+                } else if (!isIdNumericVariable) {
+                    setIsIdNumeric(false);
+                    setIsAddingValuesCorrect(true);
+                    setIsIdUsedHook(false);
+                    setIsIdNextValue(true);
+                } else if (isIdUsed) {
+                    setIsIdUsedHook(true);
+                    setIsAddingValuesCorrect(true);
+                    setIsIdNumeric(true);
+                    setIsIdNextValue(true);
+                } else if (!isIdNext) {
+                    setIsIdNextValue(false);
+                    setIsAddingValuesCorrect(true);
+                    setIsIdUsedHook(false);
+                    setIsIdNumeric(true);
+                }
             }
         }
     }
@@ -110,57 +124,61 @@ const HousesTable = props => {
     const handleEditSubmit = e => {
         e.preventDefault();
 
-        let areAllFilledIn = true;
-        for (const value of Object.values(addingValues)) {
-            if (value === '') {
-                areAllFilledIn = false;
-            }
-        }
-
-        if(areAllFilledIn) {
-            setIsAddingValuesCorrect(true);
-
-            fetch('http://localhost:5000/edit', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    'id': addingValues.id, 
-                    'address': addingValues.address, 
-                    'name_surname': addingValues.name_surname, 
-                    'condition': addingValues.condition
-                })
-            }).then(
-                response => {
-                    response.json();
-                    setIsFetchOk(true);
-                    setIsLoading(false);
-                    setPullData(current => current+1);                 
+        if (props.isLoggedIn) {
+            let areAllFilledIn = true;
+            for (const value of Object.values(addingValues)) {
+                if (value === '') {
+                    areAllFilledIn = false;
                 }
-            ).catch(error => {
-                console.log(error);
-                setIsFetchOk(false);
-                setIsLoading(false);
-            })
+            }
 
-            setAddingValues({'id': '','address': '','name_surname': '','condition': ''});
-            setIsEditing(false);
-        } else {
-                setIsAddingValuesCorrect(false);
+            if(areAllFilledIn) {
+                setIsAddingValuesCorrect(true);
+
+                fetch('http://localhost:5000/edit', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        'id': addingValues.id, 
+                        'address': addingValues.address, 
+                        'name_surname': addingValues.name_surname, 
+                        'condition': addingValues.condition
+                    })
+                }).then(
+                    response => {
+                        response.json();
+                        setIsFetchOk(true);
+                        setIsLoading(false);
+                        setPullData(current => current+1);                 
+                    }
+                ).catch(error => {
+                    console.log(error);
+                    setIsFetchOk(false);
+                    setIsLoading(false);
+                })
+
+                setAddingValues({'id': '','address': '','name_surname': '','condition': ''});
+                setIsEditing(false);
+            } else {
+                    setIsAddingValuesCorrect(false);
+            }
         }
     }
 
     const handleEdit = passedId => {
-        setIsEditing(true);
+        if (props.isLoggedIn) {
+            setIsEditing(true);
 
-        let i;
-        for (i=0; i<data.length; i++) {
-            if (data[i].id === passedId) {
-                break;
+            let i;
+            for (i=0; i<data.length; i++) {
+                if (data[i].id === passedId) {
+                    break;
+                }
             }
-        }
 
-        setEditingDataset(data[i]);
-        setAddingValues(data[i]);
+            setEditingDataset(data[i]);
+            setAddingValues(data[i]);
+        }
     }
 
     return (
@@ -228,6 +246,7 @@ const HousesTable = props => {
                         <label>ID</label>
                         {!isIdNumeric && <p className='alert visible'>ID has to be a number</p>}
                         {isIdUsedHook && <p className='alert visible'>ID is already being used</p>}
+                        {!isIdNextValue && <p className='alert visible'>Please don't skip ID values</p>}
                         <input type="text" value={addingValues.id} onChange={e => setAddingValues({...addingValues, id: e.target.value})}/>
                         <label>Address</label>
                         <input type="text" value={addingValues.address} onChange={e => setAddingValues({...addingValues, address: e.target.value})}/>

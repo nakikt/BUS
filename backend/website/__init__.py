@@ -1,12 +1,13 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from os import path
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import timedelta
+from flask_login import LoginManager
 from .methods import mine_block
+import sys
 db = SQLAlchemy()
 DB_NAME = "database.db"
-
+PORT =  sys.argv[1]
+from .blockchain import Blockchain
 
 
 from .blockchain import Blockchain
@@ -28,10 +29,12 @@ for b in blocks:
     b.add_node("http://127.0.0.1:5001")
     b.add_node("http://127.0.0.1:5002")
     b.add_node("http://127.0.0.1:5003")
+
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = "helloworld"
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
     db.init_app(app)
 
 

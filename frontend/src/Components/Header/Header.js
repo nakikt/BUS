@@ -17,12 +17,18 @@ const Header = props => {
         <div className="Header">
             <div className="container">
                 <div className="inner">
-                    <img src={logo} alt='logo' className='logo'/>
+                    <div className='wrapper'>
+                        <img src={logo} alt='logo' className='logo'/>
+                        <button onClick={() => props.setActiveSection('houses')}>Dashboard</button>
+                        <button onClick={() => props.setActiveSection('history')}>History</button>
+                    </div>
+                    <div className='wrapper'>
                     {props.user!=='' && <h2 className="greeting">Welcome, {props.user}!</h2>}
-                    <div className="btn">
-                        <button className="login" onClick={handleClick}>
-                            {props.isLoggedIn ? "Log out" : "Login"}
-                        </button>
+                        <div className="btn">
+                            <button className="login-btn" onClick={handleClick}>
+                                {props.isLoggedIn ? "Log out" : "Login"}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
