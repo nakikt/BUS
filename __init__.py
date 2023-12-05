@@ -1,31 +1,35 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from os import path
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import timedelta
+from flask_login import LoginManager
 from .methods import mine_block
+
+import sys
 db = SQLAlchemy()
 DB_NAME = "database.db"
-
-
-
+PORT =  sys.argv[1]
 from .blockchain import Blockchain
-
+from.encryption import encryption
 blockchain = Blockchain()
 blockchain1 = Blockchain()
 
-mine_block(blockchain, 0, "address0", "name_surname0", "condition0" )
-mine_block(blockchain1, 1, "address1", "name_surname1", "condition1")
+
+
+mine_block(blockchain, 0, f'{encryption("Ellen Geller")}', f'{encryption("10.10.1990")}', f'{encryption("zapalenie stawów")}',f'{encryption("covid")}')
+mine_block(blockchain1, 1, f'{encryption("John Silva")}', f'{encryption("01.01.1980")}', f'{encryption("brak")}', f'{encryption("brak")}')
 
 blocks = [blockchain, blockchain1]
 for b in blocks:
     b.add_node("http://127.0.0.1:5000")
     b.add_node("http://127.0.0.1:5001")
+    # b.add_node("http://127.0.0.1:5002")
+    # b.add_node("http://127.0.0.1:5003")
 
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = "helloworld"
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
     db.init_app(app)
 
 
@@ -50,6 +54,4 @@ def create_app():
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))
-
-
     return app

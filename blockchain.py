@@ -1,13 +1,11 @@
-import sys
 import hashlib
 import json
 from time import time
-from uuid import uuid4
-from flask import Flask, jsonify, request
 import requests
 from urllib.parse import urlparse
 from datetime import datetime
-from flask import Blueprint
+import sys
+PORT = sys.argv[1]
 
 class Blockchain(object):
     difficulty_target = "0000"
@@ -19,31 +17,27 @@ class Blockchain(object):
         self.nodes = set()
 # stores all the blocks in the entire blockchain
         self.chain = []
-# temporarily stores the property  for the current
-# block
-        self.current_property = []
-# create the genesis block with a specific fixed hash
-# of previous block genesis block starts with index 0
+# temporarily stores the health card for the current block
+        self.current_health_card = []
+# create the genesis block with a specific fixed hash of previous block genesis block starts with index 0
         genesis_hash = self.hash_block("genesis_block")
         self.append_block(
             hash_of_previous_block=genesis_hash,
             nonce=self.proof_of_work(0, genesis_hash, [])
            )
 # use PoW to find the nonce for the current block
-    def proof_of_work(self, index, hash_of_previous_block, properties):
+    def proof_of_work(self, index, hash_of_previous_block, health_cards):
 # try with nonce = 0
         nonce = 0
-# try hashing the nonce together with the hash of the
-# previous block until it is valid
-        while self.valid_proof(index, hash_of_previous_block, properties, nonce) is False:
+# try hashing the nonce together with the hash of the previous block until it is valid
+        while self.valid_proof(index, hash_of_previous_block, health_cards, nonce) is False:
             nonce += 1
 
         return nonce
 # check if the block's hash meets the difficulty target
-    def valid_proof(self, index, hash_of_previous_block, properties, nonce):
-# create a string containing the hash of the previous
-# block and the block content, including the nonce
-        content = f'{index}{hash_of_previous_block}{properties}{nonce}'.encode()
+    def valid_proof(self, index, hash_of_previous_block, health_cards, nonce):
+# create a string containing the hash of the previous block and the block content, including the nonce
+        content = f'{index}{hash_of_previous_block}{health_cards}{nonce}'.encode()
 # hash using sha256
         content_hash = hashlib.sha256(content).hexdigest()
 # check if the hash meets the difficulty target
@@ -53,27 +47,25 @@ class Blockchain(object):
         block = {
             'index': len(self.chain),
             'timestamp': str(datetime.fromtimestamp(time()).strftime('%Y-%m-%d %H:%M:%S')),
-            'property': self.current_property,
+            'health_card': self.current_health_card,
             'nonce': nonce,
             'hash_of_previous_block': hash_of_previous_block
             }
-# reset the current list of properties
-        self.current_property = []
+# reset the current list of the health_card attributes
+        self.current_health_card = []
         # add the new block to the blockchain
         self.chain.append(block)
         return block
-    def add_property (self, id, address,  name_surname, condition):
-# adds a new property to the current list of
-# property
-        self.current_property.append({
+    def add_health_card (self, id, name_surname, birth_date, diseases, vaccinations):
+# adds a new health_card to the current list of health_cards
+        self.current_health_card.append({
             'id': id,
-            'address': address,
             'name_surname': name_surname,
-            'condition': condition,
+            'birth_date': birth_date,
+            'diseases': diseases,
+            'vaccinations': vaccinations,
             })
-# get the index of the last block in the blockchain
-# and add one to it this will be the block that the
-# current property will be added to
+# get the index of the last block in the blockchain and add one to it this will be the block that the current health_card will be added to
         return self.last_block['index'] + 1
     @property
     def last_block(self):
@@ -103,8 +95,7 @@ class Blockchain(object):
 # check that the nonce is correct by hashing the
 # hash of the previous block together with the
 # nonce and see if it matches the target
-            if not self.valid_proof(current_index, block['hash_of_previous_block'],block['property'],block['nonce']):
-                print('Tu jest problem')
+            if not self.valid_proof(current_index, block['hash_of_previous_block'],block['health_card'],block['nonce']):
                 return False
 # move on to the next block on the chain
             last_block = block
@@ -115,37 +106,41 @@ class Blockchain(object):
 
     def update_blockchain(self, id):
         # get the nodes around us that has been registered
-        neighbours = self.nodes
-        new_chain = None
-        # for simplicity, look for chains longer than ours
-        max_length = len(self.chain)
-        # grab and verify the chains from all the nodes in
-        # our network
+        try:
+            neighbours = self.nodes
+            new_chain = None
+            # for simplicity, look for chains longer than ours
+            max_length = len(self.chain)
+            # grab and verify the chains from all the nodes in
+            # our network
 
-        for node in neighbours:
-            # get the blockchain from the other nodes
-            response = requests.get(f'http://{node}//blockchain/{id}')
-            # check if the length is longer and the chain
-            # is valid
+            for node in neighbours:
+                # get the blockchain from the other nodes
+                response = requests.get(f'http://{node}//blockchain/{id}')
+                # check if the length is longer and the chain
+                # is valid
 
-            if response.status_code == 200:
-                length = response.json()['length']
-                chain = response.json()['chain']
+                if response.status_code == 200:
 
-            if length > max_length:
-                max_length = length
-                new_chain = chain
+                    length = response.json()['length']
+                    chain = response.json()['chain']
 
-        # replace
-        if new_chain is not None:
-            self.chain = new_chain
+                if length > max_length:
+                    max_length = length
+                    new_chain = chain
+
+            # replace
+            if new_chain is not None:
+                self.chain = new_chain
+                return True
             return True
-        return False
+        except:
+            return False
 
     def initial_sync(self, id):
 
 
-        node = "http://127.0.0.1:5000"
+        node = f'http://127.0.0.1:5000'
                 # get the blockchain from the other nodes
         response = requests.get(f'{node}/blockchain/{id}')
                 # check if the length is longer and the chain
@@ -155,7 +150,6 @@ class Blockchain(object):
             length = response.json()['length']
             chain = response.json()['chain']
             self.chain = chain
-            print("Udało się")
             return True
 
         return False
@@ -182,5 +176,4 @@ class Blockchain(object):
                 if x > (number_of_nodes/2):
                     return True
         return False
-
 
