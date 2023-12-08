@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+{% extends "basev2.html" %} {% block title %}Home{% endblock %} {% block content
 %}
 <table>
 
@@ -9,17 +9,17 @@
       <th> username </th>
 
 </tr>
-{% for row in hosts %}
-    <tr>
-        <td> {{row.ip}}</td>
-        <td> {{row.is_alive}}</td>
-         <td> {{row.username}}</td>
-        <td>
-            <a href = "/delete/{{row.id}}" >Delete</a>
-        </td>
-    </tr>
+<!--{% for row in hosts %}-->
+<!--    <tr>-->
+<!--        <td> {{row.ip}}</td>-->
+<!--        <td> {{row.is_alive}}</td>-->
+<!--         <td> {{row.username}}</td>-->
+<!--        <td>-->
+<!--            <a href = "/delete/{{row.id}}" >Delete</a>-->
+<!--        </td>-->
+<!--    </tr>-->
 
-    {% endfor %}
+<!--    {% endfor %}-->
 </table>
 
 {% endblock %}

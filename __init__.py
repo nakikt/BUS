@@ -20,8 +20,8 @@ mine_block(blockchain1, 1, f'{encryption("John Silva")}', f'{encryption("01.01.1
 
 blocks = [blockchain, blockchain1]
 for b in blocks:
-    b.add_node("http://127.0.0.1:5000")
-    b.add_node("http://127.0.0.1:5001")
+    b.add_node("https://127.0.0.1:5000")
+    b.add_node("https://127.0.0.1:5001")
     # b.add_node("http://127.0.0.1:5002")
     # b.add_node("http://127.0.0.1:5003")
 

@@ -116,7 +116,7 @@ class Blockchain(object):
 
             for node in neighbours:
                 # get the blockchain from the other nodes
-                response = requests.get(f'http://{node}//blockchain/{id}')
+                response = requests.get(f'https://{node}//blockchain/{id}', verify=False)
                 # check if the length is longer and the chain
                 # is valid
 
@@ -140,9 +140,10 @@ class Blockchain(object):
     def initial_sync(self, id):
 
 
-        node = f'http://127.0.0.1:5000'
+        node = f'https://127.0.0.1:5000'
                 # get the blockchain from the other nodes
-        response = requests.get(f'{node}/blockchain/{id}')
+
+        response = requests.get(f'{node}/blockchain/{id}', verify=False)
                 # check if the length is longer and the chain
                 # is valid
 
@@ -165,7 +166,7 @@ class Blockchain(object):
         x = 0
         for node in neighbours:
             # get the blockchain from the other nodes
-            response = requests.get(f'http://{node}//blockchain/{id}')
+            response = requests.get(f'https://{node}//blockchain/{id}', verify=False)
             # check if the length is longer and the chain
             # is valid
 

@@ -125,7 +125,7 @@ def doctor_view(id):
             neighbours = blocks[int(id)].nodes
             for node in neighbours:
                 # blocks[id].update_blockchain(id)
-                requests.get(f'http://{node}//nodes/sync/{id}')
+                requests.get(f'https://{node}//nodes/sync/{id}', verify=False)
 
         except:
             print("Problem with sync")

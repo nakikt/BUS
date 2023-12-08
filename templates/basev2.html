@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href= "{{ url_for('static', filename='styles.css') }}">
+    <title>Medicine Hub</title>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Medicine Hub</h1>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Products</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h2>Welcome to Medicine Hub</h2>
+            <p>Your trusted source for quality healthcare products.</p>
+        </div>
+    </section>
+
+    <section class="featured-products">
+        <div class="container">
+            <h2>Featured Products</h2>
+            <div class="product-card">
+                <img src="medicine1.jpg" alt="Medicine 1">
+                <h3>Product Name 1</h3>
+                <p>Description of the product goes here.</p>
+                <button>Add to Cart</button>
+            </div>
+            <!-- Repeat similar structure for more product cards -->
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Medicine Hub. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

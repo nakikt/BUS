@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/style.css">
+    <title> Health Record Book </title>
+
+</head>
+<body>
+
+    <header>
+        <h1>Health Record Book</h1>
+        <!-- You can add a navigation bar or other header elements here -->
+    </header>
+
+    <section class="main-content">
+        <div class="content">
+            <h2>Welcome to your secured health record books</h2>
+            <p>TODO  </p>
+        </div>
+
+        <div class="login-form">
+            <h2>Login</h2>
+            <!-- Your login form can be added here -->
+            <form action="/login" method="post">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <div class="first-login">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">First login</label>
+                </div>
+                <label >OTP:</label>
+                <input type="text" name="otp">
+                <input type="submit" value="Login">
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 Praca inżynierska.</p>
+    </footer>
+
+</body>
+</html>
