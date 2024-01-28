@@ -1,4 +1,6 @@
 from flask import Blueprint,redirect, render_template, url_for
+from flask_csp.csp import csp_header
+
 from .blockchain import Blockchain
 from . import blocks, PORT
 from flask import jsonify, request
@@ -14,19 +16,22 @@ views = Blueprint("views", __name__)
 
 @views.route("/")
 @views.route("/home")
+@csp_header({'default-src':"'none'",'script-src':"'self'"})
+
 def home():
     return render_template("index.html")
 
 
 #Wyświetla wszystkie książeczki zdrowia - uprawnienia do jej wyświetlania ma tylko doctor, doktor w tym widoku może wybrać, którego pacjenta chce podejrzeć książeczkę zdrowia
 @views.route("/doctor")
+@csp_header({'default-src':"'none'",'script-src':"'self'"})
 @login_required
 def doctor():
     response =[]
     # sprawdzenie czy zalogowana osoba to lekarz
-    # user = User.query.filter_by(id=current_user.id).first()
-    #if user.role != "A":
-    #    return redirect(url_for("views.home"))
+    user = User.query.filter_by(id=current_user.id).first()
+    if user.role != "D":
+        return redirect(url_for("views.home"))
     for block in blocks:
         response.append( {
             'id': block.last_block['health_card'][-1]['id'],
@@ -41,14 +46,14 @@ def doctor():
 #Wyświetla wybraną książeczkę zdrowia
 
 @views.route("/patient", methods=['GET'])
+@csp_header({'default-src':"'none'",'script-src':"'self'"})
 @login_required
 def patient():
-    #TODO sprawdzenie czy user to pacjent
     response = []
 
     user =current_user
 
-    if user.role == 'D':
+    if user.role != 'P':
         return redirect(url_for('views.home'))
 
     id = user.blockchain_id
@@ -68,6 +73,7 @@ def patient():
 
 
 @views.route("/doctor/<id>", methods=['GET','POST'])
+@csp_header({'default-src':"'none'",'script-src':"'self'"})
 @login_required
 def doctor_view(id):
     response = []
@@ -95,7 +101,7 @@ def doctor_view(id):
         # create a new transaction
         if disease is None:
             disease = blocks[id].last_block['health_card'][-1]['diseases']
-        elif str(decryption(blocks[id].last_block['health_card'][-1]['diseases'])) == 'brak':
+        elif str(decryption(blocks[id].last_block['health_card'][-1]['diseases'])) == 'none':
             disease = f'{encryption(disease)}'
         else:
             disease= str(decryption(blocks[id].last_block['health_card'][-1]['diseases'])) + ', ' + disease
@@ -103,7 +109,7 @@ def doctor_view(id):
 
         if vaccination is None:
             vaccination = blocks[id].last_block['health_card'][-1]['vaccinations']
-        elif str(decryption(blocks[id].last_block['health_card'][-1]['vaccinations'])) == 'brak':
+        elif str(decryption(blocks[id].last_block['health_card'][-1]['vaccinations'])) == 'none':
             vaccination = f'{encryption(vaccination)}'
         else:
             vaccination = str(decryption(blocks[id].last_block['health_card'][-1]['vaccinations'])) + ', ' + vaccination
@@ -140,42 +146,5 @@ def doctor_view(id):
         })
         return render_template("doctor_edit.html", response=response)
 
-# @views.route("/doctor/edit", methods=['GET', 'POST'])
-# #@login_required
-# def doctor_edit():
-#     #TODO sprawdzenie czy to doktor
-#     # get the value passed in from the client
-#     values = request.get_json()
-#     # check that the required fields are in the POST'ed data
-#     required_fields = ['id','name_surname', 'birth_date', 'diseases', 'vaccinations']
-#     if not all(k in values for k in required_fields):
-#         return ('Missing fields', 400)
-#     # create a new transaction
-#     id = int(values['id'])
-#     if not blocks[id].valid_new(id):
-#         response = str({
-#             'Message: The validity of the block was checked by other nodes and rejected.'
-#         })
-#         print('The validity of the block was checked by other nodes and rejected.')
-#         return (jsonify(response), 201)
-#     print('The validity of the block was checked by other nodes')
-#     try:
-#         mine_block(blocks[id], values['id'], values['name_surname'], values['birth_date'], values['diseases'], values['vaccinations'])
-#         print('Block was mined to the blockchain')
-#     except:
-#         print('Failed to add block to blockchain')
-#     try:
-#         neighbours = blocks[int(id)].nodes
-#         for node in neighbours:
-#             # blocks[id].update_blockchain(id)
-#             requests.get(f'http://{node}//nodes/sync/{id}')
-#
-#     except:
-#         print("Problem with sync")
-#     response = str({'Block was successfully added'})
-#     return (jsonify(response), 201)
-#
-#
-#
-#
-#
+
+

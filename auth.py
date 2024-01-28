@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify
+from flask_csp.csp import csp_header
+
 from .models import User
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -14,23 +16,15 @@ import pyqrcode
 from flask import session
 
 @auth.route("/login", methods=['GET', 'POST'])
+@csp_header({'default-src':"'none'",'script-src':"'self'"})
 def login():
-    #session.permanent = True
-    # Creating user - use this code only once
-    # new_user = User(username="a", password=generate_password_hash(f'{salt}12345{pepper}', method='sha256'), role= 'D', otp=False , salt = salt, blockchain_id=None)
-    # new_user_p = User(username="p", password=generate_password_hash(f'{salt}12345{pepper}', method='sha256'), role='P',otp=False, salt=salt, blockchain_id=0)
-    #
-    # db.session.add(new_user)
-    # db.session.add(new_user_p)
-    #
-    # db.session.commit()
-    # login_user(new_user, remember=True)
+
     if request.method == 'POST':
         username = request.form.get("username")
         password = request.form.get("password")
         otp_verification = request.form.get("remember")
 
-        #TODO sprawdznie wpisywanych danych
+       
         if '"' in username or '"' in password:
             return "Error, pls don't try to hack our page :)"
         user = User.query.filter_by(username=username).first()
@@ -70,11 +64,13 @@ def login():
 
 
 @auth.route("/logout")
+@csp_header({'default-src':"'none'",'script-src':"'self'"})
 def logout():
     logout_user()
     return redirect(url_for("views.home"))
 
 @auth.route('/twofactor')
+@csp_header({'default-src':"'none'",'script-src':"'self'"})
 @login_required
 def two_factor_setup():
     # since this page contains the sensitive qrcode, make sure the browser does not cache it
@@ -84,6 +80,7 @@ def two_factor_setup():
         'Expires': '0'}
 
 @auth.route('/qr')
+@csp_header({'default-src':"'none'",'script-src':"'self'"})
 @login_required
 def qr():
 
@@ -99,6 +96,7 @@ def qr():
 
 
 @auth.route('/qr_code')
+@csp_header({'default-src':"'none'",'script-src':"'self'"})
 def qr_code():
 
     user = current_user
@@ -112,8 +110,10 @@ def qr_code():
         'Expires': '0'}
 
 @auth.route("/check" ,methods=['GET', 'POST'])
+@csp_header({'default-src':"'none'",'script-src':"'self'"})
 def check_otp():
     if request.method == 'POST':
         otp = request.form.get("otp")
+
 
 
